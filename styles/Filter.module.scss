@@ -1,0 +1,14 @@
+@import "variables";
+
+.select {
+  width: 20%;
+  background-image: url("/arrow.png");
+  background-color: rgba(#000, 0.3);
+  border: none;
+  transition: background ease 0.3s;
+}
+
+.active {
+  background-color: $color-main;
+  transition: background ease 0.3s;
+}

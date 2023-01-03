@@ -1,0 +1,9 @@
+.data_item {
+  cursor: pointer;
+
+  h6 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

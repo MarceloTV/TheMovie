@@ -1,0 +1,33 @@
+@import "variables";
+
+.header {
+  z-index: 2;
+  box-shadow: 0 0 1px #fff;
+  border-width: thin;
+
+  h3 {
+    color: $color-main;
+  }
+
+  .option {
+    color: rgba(255, 255, 255, 0.5);
+
+    &:hover {
+      color: rgb(255, 255, 255);
+
+      .pointer {
+        opacity: 1;
+      }
+    }
+
+    .pointer {
+      width: 10px;
+      height: 10px;
+      background: $color-main;
+      right: 45%;
+      bottom: -10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+  }
+}

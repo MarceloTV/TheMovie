@@ -1,0 +1,17 @@
+@import "variables";
+
+.item_container {
+  height: 80vh;
+}
+
+.movie_container {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("/example.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  .button_details {
+    background: $color-main;
+    color: #fff;
+  }
+}
