@@ -1,10 +1,12 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Glide from "@glidejs/glide";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
 // Styles
 import Styles from "../../styles/CategorySlider.module.scss";
+import { Category, CategoryResponse } from "../../interfaces/Response";
+import { MediaType } from "../../interfaces/Media";
 
 interface ICategoryItem {
   category: string;
@@ -20,25 +22,39 @@ const CatgoryItem: FC<ICategoryItem> = ({ category }) => {
   );
 };
 
-const CatergorySlider: FC = () => {
+const CatergorySlider: FC<{ type: MediaType }> = ({ type }) => {
+  const [data, setData] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/get_categories/${type === MediaType.Movie ? "movie" : "serie"}`)
+      .then((data) => data.json())
+      .then((data: CategoryResponse) => {
+        setData(data.genres);
+      });
+  }, []);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   useEffect(() => {
     const glide = new Glide(".glide", {
       perView: 5,
       gap: 50,
     });
 
-    glide.mount();
+    data.length !== 0 && glide.mount();
     return () => {
-      glide.destroy();
+      data.length !== 0 && glide.destroy();
     };
-  }, []);
+  }, [data]);
 
   return (
     <div className="glide mt-5 w-75 m-auto">
       <div className="glide__track" data-glide-el="track">
         <ul className="glide__slides">
-          {Array.from(Array(16).keys()).map((v) => {
-            return <CatgoryItem key={v} category="Action" />;
+          {data.map((v, i) => {
+            return <CatgoryItem key={i} category={v.name} />;
           })}
         </ul>
       </div>

@@ -5,10 +5,8 @@
 }
 
 .movie_container {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-    url("/example.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
 
   .button_details {
     background: $color-main;

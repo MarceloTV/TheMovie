@@ -1,11 +1,13 @@
 import { FC, ReactNode, useEffect, useRef, useState } from "react";
+import { Movie } from "../interfaces/Media";
 
 import Styles from "../styles/Carrousel.module.scss";
 
 interface ICarrouselMovieItem {
   active?: boolean;
-  children?: ReactNode;
-  className?: string;
+  title: string;
+  overview: string;
+  background: string;
 }
 
 const CarrouselMovieItem: FC<ICarrouselMovieItem> = (props) => {
@@ -15,15 +17,15 @@ const CarrouselMovieItem: FC<ICarrouselMovieItem> = (props) => {
     >
       <div
         className={`w-100 h-100 p-5 d-flex align-items-center ${Styles.movie_container}`}
+        style={{
+          backgroundImage: `
+          linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),url("https://image.tmdb.org/t/p/original${props.background}")
+          `,
+        }}
       >
         <div className="w-25 text-white">
-          <h2 className="mb-3">Lorem ipsum dolor sit.</h2>
-          <p className="mb-3">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet
-            natus eligendi sunt saepe distinctio tempore blanditiis numquam
-            reiciendis, voluptatibus voluptatum similique, assumenda deserunt
-            praesentium sed. Ullam vitae mollitia voluptate tempora!
-          </p>
+          <h2 className="mb-3">{props.title}</h2>
+          <p className="mb-3">{props.overview}</p>
           <button className={`btn w-25 rounded-5 ${Styles.button_details}`}>
             Details
           </button>
@@ -33,12 +35,23 @@ const CarrouselMovieItem: FC<ICarrouselMovieItem> = (props) => {
   );
 };
 
-const Carrousel: FC<{ children?: ReactNode }> = () => {
+const CarrouselMovie: FC = () => {
   const [active, setActive] = useState<number>(0);
 
   const button1 = useRef<HTMLButtonElement>(null);
   const button2 = useRef<HTMLButtonElement>(null);
   const button3 = useRef<HTMLButtonElement>(null);
+
+  const [data, setData] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    fetch("/api/get_trending/movie")
+      .then((data) => data.json())
+      .then(({ movies }: { movies: Movie[] }) => {
+        setData(movies);
+        console.log(movies);
+      });
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -94,9 +107,18 @@ const Carrousel: FC<{ children?: ReactNode }> = () => {
       </div>
       <div className={`carousel-inner ${Styles.item_container}`}>
         {/* TRENDING */}
-        <CarrouselMovieItem active={true} />
-        <CarrouselMovieItem />
-        <CarrouselMovieItem />
+        {data.length !== 0 &&
+          data.map((v, i) => {
+            return (
+              <CarrouselMovieItem
+                active={i === 0}
+                key={i}
+                title={v.title}
+                overview={v.overview}
+                background={v.backdrop_path}
+              />
+            );
+          })}
       </div>
     </div>
   );
@@ -104,4 +126,4 @@ const Carrousel: FC<{ children?: ReactNode }> = () => {
 
 export { CarrouselMovieItem };
 
-export default Carrousel;
+export default CarrouselMovie;
