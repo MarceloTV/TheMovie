@@ -1,15 +1,7 @@
-import { Movie, Serie } from "./Media";
-
-interface TrendingMovieResponse {
+interface ApiResponse<T> {
   page: number;
   total_pages: number;
-  results: Movie[];
-}
-
-interface TrendingSerieResponse {
-  page: number;
-  total_pages: number;
-  results: Serie[];
+  results: T[];
 }
 
 interface Category {
@@ -21,9 +13,4 @@ interface CategoryResponse {
   genres: Category[];
 }
 
-export type {
-  TrendingMovieResponse,
-  TrendingSerieResponse,
-  CategoryResponse,
-  Category,
-};
+export type { ApiResponse, CategoryResponse, Category };

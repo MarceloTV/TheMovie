@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, useContext, useEffect, useRef, useState } from "react";
+import { MovieContext } from "../context/MovieContext";
 import { Movie } from "../interfaces/Media";
 
 import Styles from "../styles/Carrousel.module.scss";
@@ -36,21 +37,15 @@ const CarrouselMovieItem: FC<ICarrouselMovieItem> = (props) => {
 };
 
 const CarrouselMovie: FC = () => {
+  const { getTrending, trending } = useContext(MovieContext);
   const [active, setActive] = useState<number>(0);
 
   const button1 = useRef<HTMLButtonElement>(null);
   const button2 = useRef<HTMLButtonElement>(null);
   const button3 = useRef<HTMLButtonElement>(null);
 
-  const [data, setData] = useState<Movie[]>([]);
-
   useEffect(() => {
-    fetch("/api/get_trending/movie")
-      .then((data) => data.json())
-      .then(({ movies }: { movies: Movie[] }) => {
-        setData(movies);
-        console.log(movies);
-      });
+    getTrending();
   }, []);
 
   useEffect(() => {
@@ -107,8 +102,8 @@ const CarrouselMovie: FC = () => {
       </div>
       <div className={`carousel-inner ${Styles.item_container}`}>
         {/* TRENDING */}
-        {data.length !== 0 &&
-          data.map((v, i) => {
+        {trending.length !== 0 &&
+          trending.map((v, i) => {
             return (
               <CarrouselMovieItem
                 active={i === 0}
@@ -123,7 +118,5 @@ const CarrouselMovie: FC = () => {
     </div>
   );
 };
-
-export { CarrouselMovieItem };
 
 export default CarrouselMovie;

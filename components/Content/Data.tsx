@@ -1,6 +1,9 @@
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import { MovieContext } from "../../context/MovieContext";
+import { SerieContext } from "../../context/SerieContext";
+import { MediaType } from "../../interfaces/Media";
 
 import Styles from "../../styles/Data.module.scss";
 
@@ -59,11 +62,19 @@ const DataItem: FC<IDataITem> = ({ posterImage, title, year, stars }) => {
   );
 };
 
-const Data: FC = () => {
+const Data: FC<{ type: MediaType }> = ({ type }) => {
+  const movieContext = useContext(MovieContext);
+  const serieContext = useContext(SerieContext);
+
+  useEffect(() => {
+    type == MediaType.Movie && movieContext.getAll();
+    type == MediaType.Serie && serieContext.getAll();
+  }, []);
+
   return (
     <section className="w-100 container-fluid m-0 mt-5 p-0">
       <div className="row">
-        {Array.from(Array(16).keys()).map((v) => (
+        {/* {Array.from(Array(16).keys()).map((v) => (
           <DataItem
             key={v}
             title="Lorem ipsum dolor sit amet consectetur."
@@ -71,7 +82,32 @@ const Data: FC = () => {
             year={2022}
             stars={8.6}
           />
-        ))}
+        ))} */}
+        {type == MediaType.Movie &&
+          movieContext.all.map((v, i) => {
+            return (
+              <DataItem
+                key={i}
+                title={v.title}
+                posterImage={`https://image.tmdb.org/t/p/w500${v.poster_path}`}
+                year={+v.release_date.split("-")[0]}
+                stars={v.vote_average}
+              />
+            );
+          })}
+
+        {type == MediaType.Serie &&
+          serieContext.all.map((v, i) => {
+            return (
+              <DataItem
+                key={i}
+                title={v.name}
+                posterImage={`https://image.tmdb.org/t/p/w500${v.poster_path}`}
+                year={+v.first_air_date.split("-")[0]}
+                stars={v.vote_average}
+              />
+            );
+          })}
       </div>
     </section>
   );

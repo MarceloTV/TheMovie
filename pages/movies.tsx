@@ -1,5 +1,8 @@
 import { NextPage } from "next";
 
+// Movie Provider
+import { MovieProvider } from "../context/MovieContext";
+
 // Enum
 import { MediaType } from "../interfaces/Media";
 
@@ -17,20 +20,22 @@ import Layout from "../components/Layout";
 const MoviesPage: NextPage = () => {
   return (
     <Layout>
-      <IndexBody>
-        {/* CARROUSEL */}
-        <CarrouselMovie />
+      <MovieProvider>
+        <IndexBody>
+          {/* CARROUSEL */}
+          <CarrouselMovie />
 
-        {/* CONTENT */}
-        <Content>
-          <NavType />
-          <hr className="text-light" />
-          <CatergorySlider type={MediaType.Movie} />
-          <Filter />
-          <Data />
-          <MoreButton />
-        </Content>
-      </IndexBody>
+          {/* CONTENT */}
+          <Content>
+            <NavType />
+            <hr className="text-light" />
+            <CatergorySlider type={MediaType.Movie} />
+            <Filter />
+            <Data type={MediaType.Movie} />
+            <MoreButton />
+          </Content>
+        </IndexBody>
+      </MovieProvider>
     </Layout>
   );
 };

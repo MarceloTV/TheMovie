@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useContext, useEffect, useRef, useState } from "react";
+import { SerieContext } from "../context/SerieContext";
 import { Movie, Serie } from "../interfaces/Media";
 
 import Styles from "../styles/Carrousel.module.scss";
@@ -36,21 +37,15 @@ const CarrouselSerieItem: FC<ICarrouselSerieItem> = (props) => {
 };
 
 const CarrouselSerie: FC = () => {
+  const { getTrending, trending } = useContext(SerieContext);
   const [active, setActive] = useState<number>(0);
 
   const button1 = useRef<HTMLButtonElement>(null);
   const button2 = useRef<HTMLButtonElement>(null);
   const button3 = useRef<HTMLButtonElement>(null);
 
-  const [data, setData] = useState<Serie[]>([]);
-
   useEffect(() => {
-    fetch("/api/get_trending/serie")
-      .then((data) => data.json())
-      .then(({ series }: { series: Serie[] }) => {
-        setData(series);
-        console.log(series);
-      });
+    getTrending();
   }, []);
 
   useEffect(() => {
@@ -107,17 +102,18 @@ const CarrouselSerie: FC = () => {
       </div>
       <div className={`carousel-inner ${Styles.item_container}`}>
         {/* TRENDING */}
-        {data?.map((v, i) => {
-          return (
-            <CarrouselSerieItem
-              active={i === 0}
-              key={i}
-              name={v.name}
-              overview={v.overview}
-              background={v.backdrop_path}
-            />
-          );
-        })}
+        {trending.length !== 0 &&
+          trending.map((v, i) => {
+            return (
+              <CarrouselSerieItem
+                active={i === 0}
+                key={i}
+                name={v.name}
+                overview={v.overview}
+                background={v.backdrop_path}
+              />
+            );
+          })}
       </div>
     </div>
   );

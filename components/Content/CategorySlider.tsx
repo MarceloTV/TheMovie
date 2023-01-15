@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import Glide from "@glidejs/glide";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
@@ -7,6 +7,10 @@ import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import Styles from "../../styles/CategorySlider.module.scss";
 import { Category, CategoryResponse } from "../../interfaces/Response";
 import { MediaType } from "../../interfaces/Media";
+
+// Contexts
+import { MovieContext } from "../../context/MovieContext";
+import { SerieContext } from "../../context/SerieContext";
 
 interface ICategoryItem {
   category: string;
@@ -23,19 +27,13 @@ const CatgoryItem: FC<ICategoryItem> = ({ category }) => {
 };
 
 const CatergorySlider: FC<{ type: MediaType }> = ({ type }) => {
-  const [data, setData] = useState<Category[]>([]);
+  const movieContext = useContext(MovieContext);
+  const serieContext = useContext(SerieContext);
 
   useEffect(() => {
-    fetch(`/api/get_categories/${type === MediaType.Movie ? "movie" : "serie"}`)
-      .then((data) => data.json())
-      .then((data: CategoryResponse) => {
-        setData(data.genres);
-      });
+    type == MediaType.Movie && movieContext.getCategories();
+    type == MediaType.Serie && serieContext.getCategories();
   }, []);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   useEffect(() => {
     const glide = new Glide(".glide", {
@@ -43,19 +41,32 @@ const CatergorySlider: FC<{ type: MediaType }> = ({ type }) => {
       gap: 50,
     });
 
-    data.length !== 0 && glide.mount();
+    if (type == MediaType.Movie && movieContext.categories.length !== 0) {
+      glide.mount();
+    }
+
+    if (type == MediaType.Serie && serieContext.categories.length !== 0) {
+      glide.mount();
+    }
+
     return () => {
-      data.length !== 0 && glide.destroy();
+      glide.destroy();
     };
-  }, [data]);
+  }, [movieContext.categories, serieContext.categories]);
 
   return (
     <div className="glide mt-5 w-75 m-auto">
       <div className="glide__track" data-glide-el="track">
         <ul className="glide__slides">
-          {data.map((v, i) => {
-            return <CatgoryItem key={i} category={v.name} />;
-          })}
+          {type == MediaType.Movie &&
+            movieContext.categories.map((v, i) => {
+              return <CatgoryItem key={i} category={v.name} />;
+            })}
+
+          {type == MediaType.Serie &&
+            serieContext.categories.map((v, i) => {
+              return <CatgoryItem key={i} category={v.name} />;
+            })}
         </ul>
       </div>
 
